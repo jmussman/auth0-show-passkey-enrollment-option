@@ -10,6 +10,10 @@ the user needs to opt-in for this instead of having it forced upon them.
 This action is designed to look for the opt-in and check to see if the user is not enrolled with passkeys,
 and if not trigger enrollment during the login process.
 
+This is one of a series of action examples that may be used as a foundation for building
+what you need.
+Search GitHub for *jmussman/auth0* to find other examples in the series.
+
 ## Implementation
 
 The implementation looks at the user profile for a 'passkeyOptIn' attribute set to true in the user
