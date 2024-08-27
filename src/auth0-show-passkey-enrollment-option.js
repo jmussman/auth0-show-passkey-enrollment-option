@@ -1,5 +1,5 @@
 /**
- * auth0-show-passkey-enrollment-option
+ * auth0-show-passkey-enrollment-option.js
  * Copyright © 2024 Joel A Mussman. All rights reserved.
  * 
  * This Action code is released under the MIT license and is free to copy and modify as
@@ -29,18 +29,18 @@ exports.onExecutePostLogin = async (event, api) => {
 
         DEBUG ? console.log(`User ${event.user.user_id} has passkey opt in enabled`) : null;
 
-        // Set up the connection to the management API (act as the management API client).
-
-        const ManagementClient = require('auth0').ManagementClient;
-
-        const management = new ManagementClient({
-
-            domain: event.secrets.domain,
-            clientId: event.secrets.clientId,
-            clientSecret: event.secrets.clientSecret,
-        });
-
         try {
+
+            // Set up the connection to the management API (act as the management API client).
+
+            const ManagementClient = require('auth0').ManagementClient;
+
+            const management = new ManagementClient({
+
+                domain: event.secrets.domain,
+                clientId: event.secrets.clientId,
+                clientSecret: event.secrets.clientSecret,
+            });
 
             // The user's authentication methods list is populated for passkeys and nothing else.
 
@@ -48,7 +48,7 @@ exports.onExecutePostLogin = async (event, api) => {
 
             const authenticationMethods = await management.users.getAuthenticationMethods({id: event.user.user_id});
 
-            if (!authenticationMethods) {
+            if (!authenticationMethods?.length) {
                             
                 DEBUG ? console.log(`Triggering enroll with passkey for ${event.user.user_id}`) : null;
                 
@@ -59,8 +59,10 @@ exports.onExecutePostLogin = async (event, api) => {
         catch (e) {
 
             DEBUG ? console.log(e) : null;
-        }
 
-        DEBUG ? console.log(`Completed show passkey enrollment option for ${event.user.user_id}`) : null;
+            // Rethrow the exception so Auth0 handles it and the error shows up at that level.
+
+            throw e
+        }
     }
 };
