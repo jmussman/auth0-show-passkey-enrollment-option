@@ -102,19 +102,12 @@ describe('Action tests', async () => {
         mocks.eventMock.secrets.debug = true
         mocks.eventMock.connection.strategy = 'auth0'
         mocks.eventMock.user.user_metadata.passkeyOptIn = true
-
-        if (ctor) {
-
-            ctor.mockRestore()
-            ctor = null
-        }
+        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
     })
 
     it('Ignores enrollment if strategy is undefined', async () => {
 
         delete mocks.eventMock.connection.strategy
-
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -125,8 +118,6 @@ describe('Action tests', async () => {
 
         mocks.eventMock.connection.strategy = null
 
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
-
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
         expect(ctor).not.toHaveBeenCalled()
@@ -135,8 +126,6 @@ describe('Action tests', async () => {
     it('Ignores enrollment if strategy is not auth0', async () => {
 
         mocks.eventMock.connection.strategy = 'google-oauth'
-
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -147,8 +136,6 @@ describe('Action tests', async () => {
 
         delete mocks.eventMock.user.user_metadata.passkeyOptIn
 
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
-
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
         expect(ctor).not.toHaveBeenCalled()
@@ -158,8 +145,6 @@ describe('Action tests', async () => {
 
         mocks.eventMock.user.user_metadata.passkeyOptIn = null
 
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
-
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
         expect(ctor).not.toHaveBeenCalled()
@@ -168,8 +153,6 @@ describe('Action tests', async () => {
     it('Ignores enrollment if user_metadata.passkeyOptIn is not true', async () => {
 
         mocks.eventMock.user.user_metadata.passkeyOptIn = 0
-
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -184,8 +167,6 @@ describe('Action tests', async () => {
             clientSecret: mocks.eventMock.secrets.clientSecret,
             domain: mocks.eventMock.secrets.domain
         }
-
-        ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
