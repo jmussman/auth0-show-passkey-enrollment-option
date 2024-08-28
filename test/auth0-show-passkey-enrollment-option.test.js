@@ -117,6 +117,8 @@ describe('Action tests', async () => {
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
+
+        expect(ctor).not.toHaveBeenCalled()
     })
 
     it('Ignores enrollment if strategy is null', async () => {
@@ -126,6 +128,8 @@ describe('Action tests', async () => {
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
+
+        expect(ctor).not.toHaveBeenCalled()
     })
 
     it('Ignores enrollment if strategy is not auth0', async () => {
@@ -135,6 +139,8 @@ describe('Action tests', async () => {
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
+
+        expect(ctor).not.toHaveBeenCalled()
     })
 
     it('Ignores enrollment if user_metadata.passkeyOptIn is undefined', async () => {
@@ -144,6 +150,8 @@ describe('Action tests', async () => {
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
+
+        expect(ctor).not.toHaveBeenCalled()
     })
 
     it('Ignores enrollment if user_metadata.passkeyOptIn is null', async () => {
@@ -153,6 +161,8 @@ describe('Action tests', async () => {
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
+
+        expect(ctor).not.toHaveBeenCalled()
     })
 
     it('Ignores enrollment if user_metadata.passkeyOptIn is not true', async () => {
@@ -162,6 +172,8 @@ describe('Action tests', async () => {
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
+
+        expect(ctor).not.toHaveBeenCalled()
     })
 
     it('Passes domain, clientID, and clientSecret to initialize managementClient', async () => {
