@@ -98,14 +98,13 @@ describe('Action tests', async () => {
         consoleLogMock.mockClear()
         mocks.apiMock.authentication.enrollWithAny.mockClear()
         mocks.auth0Mock.managementClient.users.getAuthenticationMethods.mockClear()
-        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
-        mocks.eventMock.secrets.debug = true
-        mocks.eventMock.connection.strategy = 'auth0'
-        mocks.eventMock.user.user_metadata.passkeyOptIn = true
         ctor = vi.spyOn(mocks.auth0Mock, 'ManagementClient').mockImplementation(() => { return { users: mocks.auth0Mock.managementClient.users }})
     })
 
     it('Ignores enrollment if strategy is undefined', async () => {
+
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.eventMock.secrets.debug = true
 
         delete mocks.eventMock.connection.strategy
 
@@ -117,6 +116,8 @@ describe('Action tests', async () => {
     it('Ignores enrollment if strategy is null', async () => {
 
         mocks.eventMock.connection.strategy = null
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.eventMock.secrets.debug = true
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -126,6 +127,8 @@ describe('Action tests', async () => {
     it('Ignores enrollment if strategy is not auth0', async () => {
 
         mocks.eventMock.connection.strategy = 'google-oauth'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.eventMock.secrets.debug = true
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -133,6 +136,9 @@ describe('Action tests', async () => {
     })
 
     it('Ignores enrollment if user_metadata.passkeyOptIn is undefined', async () => {
+
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.secrets.debug = true
 
         delete mocks.eventMock.user.user_metadata.passkeyOptIn
 
@@ -143,7 +149,9 @@ describe('Action tests', async () => {
 
     it('Ignores enrollment if user_metadata.passkeyOptIn is null', async () => {
 
+        mocks.eventMock.connection.strategy = 'auth0'
         mocks.eventMock.user.user_metadata.passkeyOptIn = null
+        mocks.eventMock.secrets.debug = true
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -152,7 +160,9 @@ describe('Action tests', async () => {
 
     it('Ignores enrollment if user_metadata.passkeyOptIn is not true', async () => {
 
+        mocks.eventMock.connection.strategy = 'auth0'
         mocks.eventMock.user.user_metadata.passkeyOptIn = 0
+        mocks.eventMock.secrets.debug = true
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -160,6 +170,11 @@ describe('Action tests', async () => {
     })
 
     it('Passes domain, clientID, and clientSecret to initialize managementClient', async () => {
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
+        mocks.eventMock.secrets.debug = true
 
         const expectedOptions = {
 
@@ -174,6 +189,11 @@ describe('Action tests', async () => {
     })
 
     it('Passes the correct user id to getAuthenticationMethods', async () => {
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.eventMock.secrets.debug = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
 
         const expectedOptions = {
 
@@ -186,8 +206,11 @@ describe('Action tests', async () => {
     })
 
     it('Does not trigger enrollment not proceed if authenticationMethods is set', async () => {
-
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
         mocks.auth0Mock.gamResponse.authenticationMethods = [ { } ] // content is meaningless
+        mocks.eventMock.secrets.debug = true
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -195,8 +218,11 @@ describe('Action tests', async () => {
     })
 
     it('Triggers enrollment if authenticationMethods is undefined', async () => {
-
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
         mocks.auth0Mock.gamResponse.authenticationMethods = undefined
+        mocks.eventMock.secrets.debug = true
 
         const expectedOptions = [ { type: 'webauthn-platform' }, { type: 'webauthn-roaming' } ] // gray-box test, but we'll catch it if somebody alters the code.
 
@@ -206,8 +232,11 @@ describe('Action tests', async () => {
     })
 
     it('Triggers enrollment if authenticationMethods is an empty array', async () => {
-
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
         mocks.auth0Mock.gamResponse.authenticationMethods = [ ]
+        mocks.eventMock.secrets.debug = true
 
         const expectedOptions = [ { type: 'webauthn-platform' }, { type: 'webauthn-roaming' } ] // gray-box test, but we'll catch it if somebody alters the code.
 
@@ -217,6 +246,11 @@ describe('Action tests', async () => {
     })
 
     it ('Enroll emits debugging messages to the console if event.secrets.debug is true', async () => {
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.eventMock.secrets.debug = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
 
@@ -225,6 +259,10 @@ describe('Action tests', async () => {
 
     it ('Does not emit debugging messages to the console if event.secrets.debug is undefined', async () => {
         
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
+       
         delete mocks.eventMock.secrets.debug
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
@@ -233,7 +271,10 @@ describe('Action tests', async () => {
     })
 
     it ('Does not emit debugging messages to the console if event.secrets.debug is null', async () => {
-        
+           
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
         mocks.eventMock.secrets.debug = null
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
@@ -242,7 +283,10 @@ describe('Action tests', async () => {
     })
 
     it ('Does not emit debugging messages to the console if event.secrets.debug is false', async () => {
-
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
         mocks.eventMock.secrets.debug = false
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
@@ -252,6 +296,9 @@ describe('Action tests', async () => {
 
     it ('Does not emit debugging messages to the console if event.secrets.debug is 0', async () => {
         
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true      
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
         mocks.eventMock.secrets.debug = 0
 
         await onExecutePostLogin(mocks.eventMock, mocks.apiMock)
@@ -259,19 +306,13 @@ describe('Action tests', async () => {
         expect(consoleLogMock).not.toHaveBeenCalled()
     })
 
-    it('Catches exception thrown during API calls', async () => {
-
-        // Redefine the API deny call to throw an exception.
-
-        const message = 'This message should be logged'
-
-        mocks.apiMock.authentication.enrollWithAny = vi.fn(() => { throw message })
- 
-        expect(async () => await onExecutePostLogin(mocks.eventMock, mocks.apiMock)).rejects.toThrow(expect.stringContaining(message))
-    })
-
-    it('Catches exception thrown during ManagementClient instantiation', async () => {
+    it('Catches exception thrown and logs it during ManagementClient instantiation', async () => {
         
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
+        mocks.eventMock.secrets.debug = true
+       
         // Redefine the ManagementClient constructor to throw an exception.
 
         const message = 'This message should be logged'
@@ -283,7 +324,11 @@ describe('Action tests', async () => {
         ctor.mockRestore()
     })
 
-    it('Does not log exception thrown for ManagementClient instantiation when DEBUG is false', async () => {
+    it('Catches exception thrown and logs it for ManagementClient instantiation when debug is off', async () => {
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
 
         const message = 'This message should be logged'
 
@@ -294,5 +339,21 @@ describe('Action tests', async () => {
  
         expect(async () => await onExecutePostLogin(mocks.eventMock, mocks.apiMock)).rejects.toThrow(expect.stringContaining(message))
         expect(consoleLogMock).not.toHaveBeenCalled()
+    })
+
+    it('Catches exception thrown and logs it during API calls', async () => {
+        
+        mocks.eventMock.connection.strategy = 'auth0'
+        mocks.eventMock.user.user_metadata.passkeyOptIn = true
+        mocks.auth0Mock.gamResponse.authenticationMethods = undefined
+        mocks.eventMock.secrets.debug = true
+
+        // Redefine the API deny call to throw an exception.
+
+        const message = 'This message should be logged'
+
+        mocks.apiMock.authentication.enrollWithAny = vi.fn(() => { throw message })
+ 
+        expect(async () => await onExecutePostLogin(mocks.eventMock, mocks.apiMock)).rejects.toThrow(expect.stringContaining(message))
     })
 })
